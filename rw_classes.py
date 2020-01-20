@@ -294,15 +294,15 @@ def exp1_plot_test(weights, k):
 	r1 = np.arange(5)
 	r2 = [x + width for x in r1]
 
-	plt.bar(r1, weights[0], width = width, color = "grey", edgecolor = "black", label = "Correct affix", align = "edge")
-	plt.bar(r2, weights[1], width = width, color = "white", edgecolor = "black", hatch = "\\", label = "Incorrect affix", align = "edge")
+	plt.bar(r1, weights[0], width = width, color = "grey", edgecolor = "black", label = "Correct affix")
+	plt.bar(r2, weights[1], width = width, color = "white", edgecolor = "black", hatch = "\\", label = "Incorrect affix",)
 	plt.xticks([r + width for r in range(len(weights[0]))], ['50', '100', '500', '1000', '2000'])
 
 	plt.xlabel("Trial", fontsize = 16)
 	#plt.grid(True)
 	if k == 2:
 		ax.legend(loc = "upper left", bbox_to_anchor = (1, 0.5), prop = {'size':12}, ncol=1)
-		plt.subplots_adjust(right=0.9)
+		plt.subplots_adjust(right=0.8)
 		ax.set_title("Suffix", fontsize = 16)
 	else:
 		plt.ylabel("Sum of weights for exemplar X", fontsize = 16)
