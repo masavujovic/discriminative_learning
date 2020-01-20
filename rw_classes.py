@@ -169,7 +169,6 @@ def exp1_suffix(beta, n_max):
 		exp1_suffix.do_trial(0.1, beta)
 		suffix_weights.append(exp1_suffix.theta.copy())
 		n += 1
-	print exp1_suffix.theta
 	suffix_weights = np.stack(suffix_weights)
 	return suffix_weights
 
@@ -184,7 +183,6 @@ def exp1_prefix(beta, n_max):
 		exp1_prefix.do_trial(0.1, beta)
 		prefix_weights.append(exp1_prefix.theta.copy())
 		n += 1
-	print exp1_prefix.theta
 	prefix_weights = np.stack(prefix_weights)
 	return prefix_weights
 
@@ -202,15 +200,17 @@ def exp1_plt(weights, j):
 		non_discrim_phon = [10, 11, 12, 13, 14, 15, 16, 17]
 		discrim_sem = [0, 1]
 		if k in non_discrim_sem:
-			plt.plot(x, w, label = names_list[k], color = "orange")
+			plt.plot(x, w, label = names_list[k], color = "orange", lw=2)
 		elif k in non_discrim_phon:
-			plt.plot(x, w, label = names_list[k], color = "purple")
-		else:
-			plt.plot(x, w, label = names_list[k])
+			plt.plot(x, w, label = names_list[k], color = "purple", lw=2)
+		elif k == 0:
+			plt.plot(x, w, label = names_list[k], color = "red", lw=2)
+		elif k ==1:
+			plt.plot(x, w, label = names_list[k], color = "green", lw=2)
 	#plt.legend()
 	if j == 1:
 		plt.ylabel("Associative strength", fontsize = 16)
-	plt.xlabel("Trial", fontsize = 14)
+	plt.xlabel("Trial", fontsize = 16)
 	box = ax.get_position()
 	ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
 	handles, labels = plt.gca().get_legend_handles_labels()
@@ -223,17 +223,90 @@ def exp1_plt(weights, j):
 			i += 1
 	if j == 2:
 		ax.legend(handles, labels, loc = "upper left", bbox_to_anchor = (1, 0.5), prop = {'size':12}, ncol=1)
-		plt.subplots_adjust(right=0.78)
+		plt.subplots_adjust(right=0.8)
+		ax.set_title("Suffix", fontsize = 16)
+	else:
+		ax.set_title("Prefix", fontsize = 16)
+	plt.grid(True)
 	plt.ylim(-0.25,1.01)
 	
 
-def plot_exp1():
-	prefix_weights = exp1_prefix(0.1, 2000)
-	prefix_exp1_plot = exp1_plt(prefix_weights, 1)
+def exp1_averaged_weights(weights_init, condition):
+	weights_init = weights_init
+	i = 0
+	while i < 500:
+		if condition == "lf":
+			new_weights = exp1_prefix(0.1, 2000)
+		else:
+			new_weights = exp1_suffix(0.1, 2000)
+		weights_init += new_weights
+		i += 1
+	weights_avg = (weights_init)/500.0
+	return weights_avg
 
+def test(test_features, test_trials, correct, incorrect):
+	all_correct = np.zeros(len(test_trials))
+	all_incorrect = np.zeros(len(test_trials))
+
+	for i in xrange(len(test_trials)):
+		total_correct = 0
+		total_incorrect = 0
+		for j in test_features:
+			total_correct += correct[test_trials[i], j]
+			total_incorrect += incorrect[test_trials[i], j]
+		all_correct[i] = total_correct
+		all_incorrect[i] = total_incorrect
+
+	all_total = [all_correct, all_incorrect]
+	all_total = np.stack(all_total)
+	return all_total
+
+def exp1_test():
+	prefix_weights = exp1_prefix(0.1, 2000)
 	suffix_weights = exp1_suffix(0.1, 2000)
-	suffix_exp1_plot = exp1_plt(suffix_weights, 2)
+	prefix_avg = exp1_averaged_weights(prefix_weights, "lf")
+	suffix_avg = exp1_averaged_weights(suffix_weights, "fl")
+
+	test_features = [0, 2, 5, 6, 8, 10, 15]
+	test_trials = [49, 99, 499, 999, 1999]
+
+	# Prefix
+	prefix_correct_weights = prefix_avg[:,0]
+	prefix_incorrect_weights = prefix_avg[:,1]
+	prefix_results = test(test_features, test_trials, prefix_correct_weights, prefix_incorrect_weights)
+	#print(prefix_results)
+
+	# Suffix
+	suffix_correct_weights = suffix_avg[:,0]
+	suffix_incorrect_weights = suffix_avg[:,1]
+	suffix_results = test(test_features, test_trials, suffix_correct_weights, suffix_incorrect_weights)
+
+	exp1_plot_test(prefix_results, 1)
+	exp1_plot_test(suffix_results, 2)
 	plt.show()
+	#return (prefix_results, suffix_results)
+	return prefix_avg
+
+def exp1_plot_test(weights, k):
+	ax = plt.subplot(1, 2, k)
+	ind = np.arange(5)
+	width = 0.5
+	r1 = np.arange(5)
+	r2 = [x + width for x in r1]
+
+	plt.bar(r1, weights[0], width = width, color = "grey", edgecolor = "black", label = "Correct affix", align = "edge")
+	plt.bar(r2, weights[1], width = width, color = "white", edgecolor = "black", hatch = "\\", label = "Incorrect affix", align = "edge")
+	plt.xticks([r + width for r in range(len(weights[0]))], ['50', '100', '500', '1000', '2000'])
+
+	plt.xlabel("Trial", fontsize = 16)
+	#plt.grid(True)
+	if k == 2:
+		ax.legend(loc = "upper left", bbox_to_anchor = (1, 0.5), prop = {'size':12}, ncol=1)
+		plt.subplots_adjust(right=0.9)
+		ax.set_title("Suffix", fontsize = 16)
+	else:
+		plt.ylabel("Sum of weights for exemplar X", fontsize = 16)
+		ax.set_title("Prefix", fontsize = 16)
 
 
 # Follow-up: Salience
@@ -245,26 +318,26 @@ def exp1_salience():
 	beta = np.zeros([num_exemplars, num_features])
 	
 	# e.g. learning_set[0,0] = 1 means that exemplar 1 has feature 1 present
-	beta[:, 0] = 0.025
-	beta[: ,1] = 0.025
-	beta[:, 2] = 0.0078
-	beta[:, 3] = 0.0078
-	beta[:, 4] = 0.0078
-	beta[:, 5] = 0.0078
-	beta[:, 6] = 0.0078
-	beta[:, 7] = 0.0078
+	beta[:, 0] = 0.1
+	beta[: ,1] = 0.1
+	beta[:, 2] = 0.01
+	beta[:, 3] = 0.01
+	beta[:, 4] = 0.01
+	beta[:, 5] = 0.01
+	beta[:, 6] = 0.01
+	beta[:, 7] = 0.01
 
-	beta[:, 8] = 0.001
-	beta[:, 9] = 0.001
+	beta[:, 8] = 0.0001
+	beta[:, 9] = 0.0001
 
-	beta[:, 10] = 0.00005
-	beta[:, 11] = 0.00005
-	beta[:, 12] = 0.00005
-	beta[:, 13] = 0.00005
-	beta[:, 14] = 0.00005
-	beta[:, 15] = 0.00005
-	beta[:, 16] = 0.00005
-	beta[:, 17] = 0.00005
+	beta[:, 10] = 0.00001
+	beta[:, 11] = 0.00001
+	beta[:, 12] = 0.00001
+	beta[:, 13] = 0.00001
+	beta[:, 14] = 0.00001
+	beta[:, 15] = 0.00001
+	beta[:, 16] = 0.00001
+	beta[:, 17] = 0.00001
 
 	return beta
 
@@ -278,7 +351,7 @@ def plot_exp1_salience():
 	suffix_exp1_plot = exp1_plt(suffix_weights, 2)
 	plt.show()
 
-plot_exp1_salience()
+exp1_test()
 
 
 
