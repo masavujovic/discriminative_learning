@@ -8,4 +8,11 @@ as well as here:
 
 * Vujović, M., Ramscar, M., & Wonnacott, E. (in submission). Laguage learning as uncertainty reduction: The role of prediction error in linguistic generalization and item learning. [[pre-print](https://osf.io/f2n9d/)]
 
-If you wish to replicate the results from the paper, call <code>get_plots_paper()</code> from <code>experiment3.py</code>
+To replicate the results from the paper, run the following (where <code>beta</code> is the learning rate and <code>n_trials</code> is the number of trials to run the model for; in Vujović et al., we used <code>0.01</code> and <code>7000</code>, respectively).
+
+```python
+from experiment_3 import Results
+
+results = Results(beta, n_trials)
+results.plot_paper()
+```
