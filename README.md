@@ -1,6 +1,6 @@
 # Discriminative Learning 
 
-This repo contains the code base for a series of discriminative learning models (implementing a simplified version of the Rescorla-Wagner learning rule) as reported in my PhD [thesis](https://languagelearninglabucl.files.wordpress.com/2020/10/vujovic_phd_final_20201005.pdf):
+This repo contains the code base for a series of discriminative learning models (implementing a simplified version of the Rescorla-Wagner learning rule) as reported in my PhD [thesis](https://discovery.ucl.ac.uk/id/eprint/10111567/1/Vujovic_PhD_final_20201005.pdf):
 
 * Vujović, M. (2020). Exploring language learning as uncertainty reduction using artificial language learning. University College London. 
 
