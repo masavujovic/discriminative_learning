@@ -6,9 +6,9 @@ np.set_printoptions(threshold=sys.maxsize)
 
 def averaged_weights(weights_init, learning_set, probabilities, categories, number_of_categories, condition, beta,
                      n_trials):
-    """Compute avrage weights over 500 runs of the model 
+    """Compute average weights over 500 runs of the model
 
-    Keyword arguments:
+    Arguments:
     weights_init -- weights after a single run of the model 
     learning set --  trials on which the model is trained (array)
     probabilities -- probabilities of each trial in learning_set (vector)
@@ -65,7 +65,7 @@ def luces_choice(sums):
     Return:
         prob_correct -- list of probabilities of choosing the correct affix in each condition
 
-    Keyword arguments:
+    Arguments:
         sums -- sums of weights for the correct and incorrect affix in each condition
     """
     prefix_correct = sums[0, 0]
