@@ -91,15 +91,15 @@ def get_experiment1_setup():
     return(learning_set, probabilities, categories, number_of_categories)
 
 learning_set, probabilities, categories, number_of_categories = get_experiment1_setup()
-alpha = 0.1
-beta = 0.1
+beta = 0.01
 n_trials = 2000
 
-p = Simulation(learning_set, probabilities, categories, number_of_categories, "prefix", alpha, beta, n_trials)
+p = Simulation(learning_set, probabilities, categories, number_of_categories, "prefix", beta, n_trials)
 prefix_weights = p.simulate()
 
-s = Simulation(learning_set, probabilities, categories, number_of_categories, "suffix", alpha, beta, n_trials)
+s = Simulation(learning_set, probabilities, categories, number_of_categories, "suffix", beta, n_trials)
 suffix_weights = s.simulate()
+
 
 def exp1_test_raw(test_features, test_trials):
     """Test the model as follows:
@@ -111,12 +111,14 @@ def exp1_test_raw(test_features, test_trials):
         weights: for both conditions, the raw weight sum for the correct affix and the incorrect affix 
                  for given test item
     
-    Keywrod arguments:
+    Arguments:
         test_features -- list of features of the test item
         test_trials -- list of trial numbers at which to test the model
     """
-    prefix_averaged_weights = testmodel.averaged_weights(prefix_weights, learning_set, probabilities, categories, number_of_categories, "prefix", alpha, beta, n_trials)
-    suffix_averaged_weights = testmodel.averaged_weights(suffix_weights, learning_set, probabilities, categories, number_of_categories, "suffix", alpha, beta, n_trials)
+    prefix_averaged_weights = testmodel.averaged_weights(prefix_weights, learning_set, probabilities, categories,
+                                                         number_of_categories, "prefix", beta, n_trials)
+    suffix_averaged_weights = testmodel.averaged_weights(suffix_weights, learning_set, probabilities, categories,
+                                                         number_of_categories, "suffix", beta, n_trials)
 
     # Prefix
     prefix_correct_weights = prefix_averaged_weights[:,0]
@@ -131,16 +133,19 @@ def exp1_test_raw(test_features, test_trials):
     sum_weights = np.concatenate([prefix_results, suffix_results], axis = 1)
     return sum_weights
 
+
 def exp1_weights_fig():
     # Experiment 1 plot weights: Figure 3.2 in thesis
     plots.exp1_plt_weights(prefix_weights, 1)
     plots.exp1_plt_weights(suffix_weights, 2)
     plt.show()
 
+
 def exp1_sum_fig():
     # Experiment 1 plot raw weights at test: Figure 3.3 panel A in thesis
     plots.plt_sum(w, -0.1, 4.1)
     plt.show()
+
 
 def exp1_luces_fig():
     # Experiment 1 plot Luce's choice axiom results: Figure 3.3 panel B in thesis
@@ -148,11 +153,13 @@ def exp1_luces_fig():
     plots.plt_luce(prob_correct)
     plt.show()
 
+
 def exp1_raw_weights():
     test_features = [0, 2, 5, 6, 8, 10, 16]
     test_trials = [1999]
     w = exp1_test_raw(test_features, test_trials)
     return w
+
 
 if __name__ == '__main__':
     exp1_weights_fig()
