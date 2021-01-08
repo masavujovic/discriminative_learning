@@ -1,5 +1,8 @@
+import os
 import numpy as np
 import matplotlib.pyplot as plt
+
+from pathlib import Path
 
 import testmodel
 import plots
@@ -178,7 +181,6 @@ class Experiment3:
         Figure 4.2 in thesis and Figure 2 in paper."""
         plots.exp3_plt_weights(self.prefix_weights, 1)
         plots.exp3_plt_weights(self.suffix_weights, 2)
-        plt.show()
 
 
 class Results(Experiment3):
@@ -217,10 +219,19 @@ class Results(Experiment3):
         plt.show()
 
     def plot_paper(self):
+        path = Path(__file__).parent
         _, _, prob_correct_hf, prob_correct_lf = self.get_results()
         self.plot_weights()  # Figure 2 paper
-        plt.show()
+        plt.tight_layout()
+        plt.savefig(fname=str(path)+ '/Vujovic_etal_model_weights.png', quality=95, dpi=300)
+        plt.clf()
 
         p = np.stack([prob_correct_hf, prob_correct_lf])
         plots.plt_paper(p)  # Figure 3 paper
-        plt.show()
+        plt.tight_layout()
+        plt.savefig(fname=str(path) +'/Vujovic_etal_model_test.png', quality=95, dpi=300)
+
+
+if __name__ == '__main__':
+    r = Results(0.01, 7000)
+    r.plot_paper()

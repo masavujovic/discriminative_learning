@@ -20,16 +20,18 @@ def averaged_weights(weights_init, learning_set, probabilities, categories, numb
     n_trials -- number of trials (integer)
     """
     i = 0
-    while i < 10:
+    while i < 499:
         if condition == "prefix":
-            network = Simulation(learning_set, probabilities, categories, number_of_categories, "prefix", beta, n_trials)
+            network = Simulation(learning_set, probabilities, categories, number_of_categories, "prefix",
+                                 beta, n_trials)
             new_weights = network.simulate()
         else:
-            network = Simulation(learning_set, probabilities, categories, number_of_categories, "suffix", beta, n_trials)
+            network = Simulation(learning_set, probabilities, categories, number_of_categories, "suffix",
+                                 beta, n_trials)
             new_weights = network.simulate()
         weights_init += new_weights
         i += 1
-    weights_avg = (weights_init)/10.0
+    weights_avg = (weights_init)/499.0
     return weights_avg
 
 
