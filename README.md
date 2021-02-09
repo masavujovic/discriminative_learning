@@ -6,7 +6,7 @@ This repo contains the code base for a series of discriminative learning models 
 
 as well as here:
 
-* Vujović, M., Ramscar, M., & Wonnacott, E. (in submission). Laguage learning as uncertainty reduction: The role of prediction error in linguistic generalization and item learning. [[pre-print](https://osf.io/f2n9d/)]
+* Vujović, M., Ramscar, M., & Wonnacott, E. (in press). Laguage learning as uncertainty reduction: The role of prediction error in linguistic generalization and item learning. To appear in <em>Journal of Memory and Language</em>. [[pre-print](https://osf.io/f2n9d/)]
 
 To replicate the results from the paper, run the following (where <code>beta</code> is the learning rate and <code>n_trials</code> is the number of trials to run the model for; in Vujović et al., we used <code>0.01</code> and <code>7000</code>, respectively).
 
